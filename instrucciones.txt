@@ -1,0 +1,38 @@
+INSTRUCCIONES:
+
+Para esta práctica se requerirá que el estudiante desarrolle una solución informática usando lenguaje de programación Python para analizar listas de reproducción.
+
+REQUERIMIENTOS DE LA PRACTICA:
+
+- Menú principal en consola
+    · Agregar directorio para búsqueda de listas de reproducción
+    · Ver Listas de reproducción agregadas
+    · Encontrar duplicados en la misma listas de reproducción
+    · Exportar lista de reproducción en CSV
+    · Estadísticas
+    · Salir
+- El menú será desarrollado en la terminal (no se permite el uso de GUI)
+- Deberá ser subida tanto al repositorio Github del curso como a la actividad designada para ello dentro de la Uvirtual. 
+- Para la gráfica de histograma podrán utilizar mathplotlib.
+- Para la lectura del XML pueden utilizar bibliotecas auxiliares.
+- No se permite bibliotecas adicionales a las del punto 5 y 6. 
+- Fecha de entrega: 31 de agosto a más tardar a las 23:59.
+
+Para más información:
+file:///Users/Macbook/Downloads/Pr%C3%A1ctica%201%20-%20Listas%20de%20m%C3%BAsica.pdf
+
+TO DO:
+
+[ ] Como hacer un buen repositorio
+[ ] Crear un menú lo más bonito posible
+[x] Parsear documentos XML con beautiful soup
+[ ] Graficar con mathplotlib
+[/] Trabajar con Jupyter para simplificar trabajo
+[ ] Hacerlo con POO para facilitar interfaces adicionales
+[ ] Un paquete para leer y escribir CSV hecho por mi
+[ ] Cambiar color de los outputs de la consola
+
+DUDAS:
+- ¿Como ingreso las playlists que voy a leer?
+    · Si las tiene que buscar el programa ¿Puedo usar el modulo os?
+    · Si las tengo que ingresar manualmente, ¿será en el script o terminal?
