@@ -188,6 +188,7 @@ dmypy.json
 # Ignore all local history of files
 .history
 
+instrucciones.txt
 Datos/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,macos,jupyternotebooks
