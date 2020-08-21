@@ -50,6 +50,7 @@ class Documento:
         self.songs['duracion'] = duracion
 
     def orden_canciones(self):
+        """Guarda el orden de las canciones en una lista"""
         with open(self.archivo, 'r') as xml_file:
             soup = BeautifulSoup(xml_file, 'lxml')
             container = soup.find('array').find('array').find_all('integer')
@@ -57,6 +58,8 @@ class Documento:
                 self.orden.append(i.text)
 
     def find_repetidos(self):
+        """Encuentra la repeticion de las canciones en una playlist y agrega
+        estos valores al diccionario con los valores"""
         repeticiones = []
         auxiliar = self.orden
         while auxiliar:
@@ -67,6 +70,8 @@ class Documento:
         self.songs['repeticion'] = repeticiones
 
     def write_csv(self,nombre_doc):
+        """Recibe nombre para un documento le coloca la extensión CSV
+        y guarda en el los valores de la playlist"""
         with open(f'Datos/{nombre_doc}.csv', 'w') as csv_file:
             csv_file.write('Song ID, Nombre, Artista, Duración, Repetición\n')
             for i in range(len(self.songs.get('nombre'))):
@@ -75,6 +80,35 @@ class Documento:
                 csv_file.write(self.songs.get('artista')[i] + ', ')
                 csv_file.write(self.songs.get('duracion')[i] + ', ')
                 csv_file.write(str(self.songs.get('repeticion')[i]) + '\n')
+
+styles = {
+    'nan' : 0, 'bold' : 1, 'weak' : 2, 'italic' : 3,
+    'under' : 4, 'inv' : 5, 'cens' : 6, 'stk' : 7
+}
+color_txt = {
+    'black' : 30, 'red' : 31, 'green' : 32, 'yellow' : 33,
+    'blue' : 34, 'purple' : 35, 'cian' : 36, 'white' : 37
+}
+color_bg = {
+    'black' : 40, 'red' : 41, 'green' : 42, 'yellow' : 43,
+    'blue' : 44, 'purple' : 45, 'cian' : 46, 'white' : 47
+}
+
+def press(string, sty='nan', bg_color='white', bt_color='black'):
+    """Imprime en consola con estilos personalizables"""
+    estilo = styles.get(sty)
+    txtcolor = color_txt.get(bt_color)
+    bgcolor = color_bg.get(bg_color)
+    string = str(string)
+    print(f'\033[{estilo};{txtcolor};{bgcolor}m' + string + '\033[0;m')
+
+def time(milisecs):
+    """Recibe un entero en milisegundos y lo imprime en formato
+    min:sec.mili_sec"""
+    tiempo = str(milisecs)
+    mili_segundos = tiempo[-3:]
+    minutos = int(tiempo[0:-3])
+    print(f'{minutos//60}:{minutos%60}.{mili_segundos}')
 
 if __name__ == "__main__":
     amigos = 'Datos/To_parse.xml'
@@ -88,11 +122,5 @@ if __name__ == "__main__":
     intento1.find_repetidos()
     print(intento1.repeticion)
     intento1.write_csv('hola')
-
-
-'''
-print("\033[2J\033[1;1f")
-
-print(chr(27)+"[1;33m"+"Texto en negrita de color amarillo")
-
-print(chr(27)+"[0;37m"+"Texto normal")'''
+    press('hola mundo')
+    time(285178)
