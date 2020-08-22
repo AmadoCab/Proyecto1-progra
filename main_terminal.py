@@ -5,44 +5,6 @@ import time
 
 run = True
 
-def directorio_csvs():
-    """Si existe directorio con ese nombre """
-    for i in os.listdir():
-        if i == 'ListasCSV':
-            return 1
-    os.mkdir('ListasCSV')
-    return 0
-
-def directorio_repor():
-    for i in os.listdir():
-        if i == 'Reportes':
-            return 1
-    os.mkdir('Reportes')
-    return 0
-
-header = """|--------------------------------------------------------------|
-| LEER LISTAS DE REPRODUCIÓN CONSTRUIDAS DESDE ITUNES DE APPLE |
-|--------------------------------------------------------------|
-Con este script de python usted podrá leer listas de
-reproducción que hayan sido construidas desde la 
-herramienta Itunes de Apple.
-"""
-
-instrucciones = """
-Ingrese la ruta absoluta del directorio donde se buscaran 
-las listas de reproduccion a parsear, si no conoce la ruta 
-absoluta arrastre el directorio que desea ingresar hacia a 
-la terminal. Si coloca «quit()» el programa acabará"""
-
-pregunta = ">>> "
-
-cabecera_documentos = """Los documentos .xml que se han encontrado en su 
-carpeta son:"""
-
-mensaje_documentos = """\nLos documentos en \033[0;32m verde\033[0;m son posiblemente una 
-lista de reproducción, los \033[0;31m rojos\033[0;m no.
-"""
-
 # Main loop
 initial_directory = os.getcwd()
 directorio_csvs()
@@ -62,7 +24,7 @@ while run:
             os.chdir(ans1)
         except:
             print('\nSu entrada no es válida')
-            time.sleep(2) # TIME
+            time.sleep(1) # TIME
             continue
         print('\nBuscando listas de reproducción en')
         print(ans1)
@@ -86,8 +48,19 @@ while run:
                 i1 += 1
         print(mensaje_documentos)
         print("Seleccione por indice el documento que desea parsear")
-        ans2 = input(pregunta)
-
-        loquesea = input()
+        try:
+            ans2 = int(input(pregunta))
+            musica_principal = Documento(lista_docs[ans2-1])
+        except:
+            print("Parece que hubo un error, reinicie proceso")
+            time.sleep(1) # TIME
+            continue
+        print('\nRevisando el documento:', end=' ')
+        print(lista_docs[ans2-1])
+        time.sleep(2) # TIME
+        subprocess.run('clear' ,shell=True)
+        barra_carga(musica_principal)
+        musica_principal.make_report()
+        loquesea = input('\nPresione Enter para continuar')
 
 #

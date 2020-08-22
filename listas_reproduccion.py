@@ -1,4 +1,7 @@
 from bs4 import BeautifulSoup
+import os
+import subprocess
+import time
 
 class Documento:
     # Atributos
@@ -9,6 +12,7 @@ class Documento:
     songs = {}
     orden = []
     repeticion = []
+    report = 'Terminal' # 'LaTeX'
 
     # Metodos
     def probability_playlist(self):
@@ -81,6 +85,18 @@ class Documento:
                 csv_file.write(self.songs.get('duracion')[i] + ', ')
                 csv_file.write(str(self.songs.get('repeticion')[i]) + '\n')
 
+    def make_report(self):
+        if self.report == 'Terminal':
+            print(f'Las canciones en la lista de reproducción: {self.archivo}')
+            for i in range(len(self.songs.get('nombre'))):
+                print(f'\nCanción #{i+1}')
+                print(f"{bl}Nombre: {self.songs.get('nombre')[i]}")
+                print(f"{bl}Artista: {self.songs.get('artista')[i]}")
+                print(f"{bl}Duración: {timet(self.songs.get('duracion')[i])}")
+                print(f"{bl}Veces agregada: {self.songs.get('repeticion')[i]}")
+
+bl = '\033[1;35m  · \033[0;m'
+
 styles = {
     'nan' : 0, 'bold' : 1, 'weak' : 2, 'italic' : 3,
     'under' : 4, 'inv' : 5, 'cens' : 6, 'stk' : 7
@@ -107,13 +123,72 @@ def press(string, sty='nan', bg_color='nothing', bt_color='nothing'):
     else:
         print(f'\033[{estilo};{txtcolor};{bgcolor}m' + string + '\033[0;m')
 
-def time(milisecs):
+def timet(milisecs):
     """Recibe un entero en milisegundos y lo imprime en formato
     min:sec.mili_sec"""
     tiempo = str(milisecs)
     mili_segundos = tiempo[-3:]
     minutos = int(tiempo[0:-3])
-    print(f'{minutos//60}:{minutos%60}.{mili_segundos}')
+    return f'{minutos//60}:{minutos%60}.{mili_segundos}'
+
+def directorio_csvs():
+    """Si existe directorio con ese nombre """
+    for i in os.listdir():
+        if i == 'ListasCSV':
+            return 1
+    os.mkdir('ListasCSV')
+    return 0
+
+def directorio_repor():
+    for i in os.listdir():
+        if i == 'Reportes':
+            return 1
+    os.mkdir('Reportes')
+    return 0
+
+def barra_carga(archivo):
+    carga="[                                                            ](0%)"
+    print(carga)
+    time.sleep(0.5)
+    archivo.find_songs()
+    subprocess.run('clear', shell=True)
+    carga="[||||||||||||||||||||                                        ](33%)"
+    print(carga)
+    time.sleep(0.5)
+    archivo.orden_canciones()
+    subprocess.run('clear', shell=True)
+    carga="[||||||||||||||||||||||||||||||||||||||||                    ](66%)"
+    print(carga)
+    time.sleep(0.5)
+    archivo.find_repetidos()
+    subprocess.run('clear', shell=True)
+    carga="[||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||](100%)"
+    print(carga)
+    time.sleep(0.5)
+    subprocess.run('clear', shell=True)
+
+header = """|--------------------------------------------------------------|
+| LEER LISTAS DE REPRODUCIÓN CONSTRUIDAS DESDE ITUNES DE APPLE |
+|--------------------------------------------------------------|
+Con este script de python usted podrá leer listas de
+reproducción que hayan sido construidas desde la 
+herramienta Itunes de Apple.
+"""
+
+instrucciones = """
+Ingrese la ruta absoluta del directorio donde se buscaran 
+las listas de reproduccion a parsear, si no conoce la ruta 
+absoluta arrastre el directorio que desea ingresar hacia a 
+la terminal. Si coloca «quit()» el programa acabará"""
+
+pregunta = ">>> "
+
+cabecera_documentos = """Los documentos .xml que se han encontrado en su 
+carpeta son:"""
+
+mensaje_documentos = """\nLos documentos en \033[0;32m verde\033[0;m son posiblemente una 
+lista de reproducción, los \033[0;31m rojos\033[0;m no.
+"""
 
 if __name__ == "__main__":
     amigos = 'Datos/To_parse.xml'
@@ -128,4 +203,4 @@ if __name__ == "__main__":
     print(intento1.repeticion)
     intento1.write_csv('hola')
     press('hola mundo')
-    time(285178)
+    timet(285178)
