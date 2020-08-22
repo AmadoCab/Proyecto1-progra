@@ -59,8 +59,12 @@ while run:
         print(lista_docs[ans2-1])
         time.sleep(2) # TIME
         subprocess.run('clear' ,shell=True)
-        barra_carga(musica_principal)
-        musica_principal.make_report()
-        loquesea = input('\nPresione Enter para continuar')
+        try:
+            barra_carga(musica_principal)
+            musica_principal.make_report()
+        except:
+            print('Hubo un error')
+            continue
+        loquesea = input('\nPresione (Enter) para continuar')
 
 #
