@@ -87,20 +87,25 @@ styles = {
 }
 color_txt = {
     'black' : 30, 'red' : 31, 'green' : 32, 'yellow' : 33,
-    'blue' : 34, 'purple' : 35, 'cian' : 36, 'white' : 37
+    'blue' : 34, 'purple' : 35, 'cian' : 36, 'white' : 37,
+    'nothing' : ''
 }
 color_bg = {
     'black' : 40, 'red' : 41, 'green' : 42, 'yellow' : 43,
-    'blue' : 44, 'purple' : 45, 'cian' : 46, 'white' : 47
+    'blue' : 44, 'purple' : 45, 'cian' : 46, 'white' : 47,
+    'nothing' : ''
 }
 
-def press(string, sty='nan', bg_color='white', bt_color='black'):
+def press(string, sty='nan', bg_color='nothing', bt_color='nothing'):
     """Imprime en consola con estilos personalizables"""
     estilo = styles.get(sty)
     txtcolor = color_txt.get(bt_color)
     bgcolor = color_bg.get(bg_color)
     string = str(string)
-    print(f'\033[{estilo};{txtcolor};{bgcolor}m' + string + '\033[0;m')
+    if bgcolor == '':
+        print(f'\033[{estilo};{txtcolor}m' + string + '\033[0;m')
+    else:
+        print(f'\033[{estilo};{txtcolor};{bgcolor}m' + string + '\033[0;m')
 
 def time(milisecs):
     """Recibe un entero en milisegundos y lo imprime en formato
