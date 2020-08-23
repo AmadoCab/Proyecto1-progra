@@ -2,19 +2,33 @@ from bs4 import BeautifulSoup
 import os
 import subprocess
 import time
+from datetime import datetime
+from matplotlib import pyplot as plt
 
 class Documento:
     # Atributos
     def __init__(self, archivo):
         self.archivo = archivo
 
+    playlist_name = ''
+    save_name = ''
     posible_playlist = False
     songs = {}
     orden = []
     repeticion = []
-    report = 'Terminal' # 'LaTeX'
+    report = 'TXT' # 'LaTeX' 'Markdown'
 
     # Metodos
+    def nombre_playlist(self):
+        with open(self.archivo, 'r') as xml_file:
+            soup = BeautifulSoup(xml_file, 'lxml')
+            container = soup.find('array').find('dict').find_all('key')
+            for x in container:
+                if x.text == 'Name':
+                    self.playlist_name = x.next_sibling.text
+        tiempo = str(datetime.now()).replace(' ', '_')
+        self.save_name = (f'{self.playlist_name}_{tiempo}')
+
     def probability_playlist(self):
         """Define la probabilidad de que un documento sea playlist"""
         with open(self.archivo, 'r') as xml_file:
@@ -86,16 +100,32 @@ class Documento:
                 csv_file.write(str(self.songs.get('repeticion')[i]) + '\n')
 
     def make_report(self):
-        if self.report == 'Terminal':
-            print(f'Las canciones en la lista de reproducción: {self.archivo}')
-            for i in range(len(self.songs.get('nombre'))):
-                print(f'\nCanción #{i+1}')
-                print(f"{bl}Nombre: {self.songs.get('nombre')[i]}")
-                print(f"{bl}Artista: {self.songs.get('artista')[i]}")
-                print(f"{bl}Duración: {timet(self.songs.get('duracion')[i])}")
-                print(f"{bl}Veces agregada: {self.songs.get('repeticion')[i]}")
+        press("--REPORTE--", sty='bold')
+        print(f'Las canciones en la lista de reproducción: {self.archivo}')
+        for i in range(len(self.songs.get('nombre'))):
+            print(f'\nCanción #{i+1}')
+            print(f"{bl}Nombre: {self.songs.get('nombre')[i]}")
+            print(f"{bl}Artista: {self.songs.get('artista')[i]}")
+            print(f"{bl}Duración: {timet(self.songs.get('duracion')[i])}")
+            print(f"{bl}Veces agregada: {self.songs.get('repeticion')[i]}")
+    
+    def make_graph(self):
+        tiempo = [int(i) for i in self.songs.get('duracion')]
+        nombrec = self.songs.get('nombre')
+        plt.barh(nombrec, tiempo)
+        plt.xlabel('Canciones')
+        plt.ylabel('Duracion en ms')
+        plt.title('Graficas de duración')
+        plt.show()
 
-bl = '\033[1;35m  · \033[0;m'
+    def make_histogram(self, bin_n):
+        tiempo = [int(i) for i in self.songs.get('duracion')]
+        plt.hist(tiempo, bins=bin_n, edgecolor='black')
+        plt.xlabel('Duracion en ms')
+        plt.title('Histograma de duración')
+        plt.show()
+
+bl = '\033[1;35m  • \033[0;m'
 
 styles = {
     'nan' : 0, 'bold' : 1, 'weak' : 2, 'italic' : 3,
@@ -152,17 +182,17 @@ def barra_carga(archivo):
     time.sleep(0.5)
     archivo.find_songs()
     subprocess.run('clear', shell=True)
-    carga="[||||||||||||||||||||                                        ](33%)"
+    carga="[████████████████████                                        ](33%)"
     print(carga)
     time.sleep(0.5)
     archivo.orden_canciones()
     subprocess.run('clear', shell=True)
-    carga="[||||||||||||||||||||||||||||||||||||||||                    ](66%)"
+    carga="[████████████████████████████████████████                    ](66%)"
     print(carga)
     time.sleep(0.5)
     archivo.find_repetidos()
     subprocess.run('clear', shell=True)
-    carga="[||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||](100%)"
+    carga="[████████████████████████████████████████████████████████████](100%)"
     print(carga)
     time.sleep(0.5)
     subprocess.run('clear', shell=True)
@@ -204,3 +234,6 @@ if __name__ == "__main__":
     intento1.write_csv('hola')
     press('hola mundo')
     timet(285178)
+    print(intento1.playlist_name)
+    print(intento1.save_name)
+    intento1.make_graph()

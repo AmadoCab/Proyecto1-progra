@@ -51,6 +51,7 @@ while run:
         try:
             ans2 = int(input(pregunta))
             musica_principal = Documento(lista_docs[ans2-1])
+            musica_principal.nombre_playlist()
         except:
             print("Parece que hubo un error, reinicie proceso")
             time.sleep(1) # TIME
@@ -58,13 +59,32 @@ while run:
         print('\nRevisando el documento:', end=' ')
         print(lista_docs[ans2-1])
         time.sleep(2) # TIME
-        subprocess.run('clear' ,shell=True)
+        subprocess.run('clear', shell=True)
         try:
             barra_carga(musica_principal)
             musica_principal.make_report()
         except:
+            subprocess.run('clear', shell=True)
             print('Hubo un error')
+            time.sleep(1) # TIME
             continue
+        correcto = False
+        while not correcto:
+            print('\nDesea elevorar una gráfica [y/n]')
+            ans3 = input(pregunta)
+            ans3 = ans3.lower()
+            if ans3 == 'y':
+                try:
+                    print('Selecione la cantidad de columnas')
+                    ans4 = int(input(pregunta))
+                    musica_principal.make_histogram(ans4)
+                    correcto = True
+                except:
+                    pass
+            elif ans3 == 'n':
+                correcto = True
+            subprocess.run('clear', shell=True)
+            musica_principal.make_report()
         loquesea = input('\nPresione (Enter) para continuar')
 
 #
