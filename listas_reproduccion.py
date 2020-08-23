@@ -9,14 +9,45 @@ class Documento:
     # Atributos
     def __init__(self, archivo):
         self.archivo = archivo
-
+    
+    initial_directory = os.getcwd()
     playlist_name = ''
     save_name = ''
     posible_playlist = False
     songs = {}
     orden = []
     repeticion = []
-    report = 'TXT' # 'LaTeX' 'Markdown'
+    report = 'Markdown' # 'Markdown' 'LaTeX'
+    existant_graph = False
+
+    tex = """\\documentclass{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage{graphicx}
+
+\\title{Reporte lista de reproducción\\\\
+NOMBRELISTAREPRO}
+\\date{DATE}
+
+\\begin{document}
+
+\\maketitle
+\\begin{center}
+\\rule{30em}{0.1ex}
+\\end{center}
+
+\\section{Canciones}
+SUSTITUCION1
+
+\\end{document}"""
+
+    md = """# Reporte lista de reproducción
+# NOMBRELISTAREPRO
+DATE
+
+***
+
+## Canciones
+SUSTITUCION1"""
 
     # Metodos
     def nombre_playlist(self):
@@ -116,14 +147,74 @@ class Documento:
         plt.xlabel('Canciones')
         plt.ylabel('Duracion en ms')
         plt.title('Graficas de duración')
+        os.chdir(self.initial_directory)
+        plt.savefig(f'{self.save_name}.png')
         plt.show()
+        self.existant_graph = True
 
     def make_histogram(self, bin_n):
         tiempo = [int(i) for i in self.songs.get('duracion')]
         plt.hist(tiempo, bins=bin_n, edgecolor='black')
         plt.xlabel('Duracion en ms')
         plt.title('Histograma de duración')
+        os.chdir(self.initial_directory)
+        plt.savefig(f'{self.save_name}.png')
         plt.show()
+        self.existant_graph = True
+
+    def save_report(self):
+        if self.report == 'LaTeX':
+            self.tex = self.tex.replace('NOMBRELISTAREPRO', self.playlist_name)
+            self.tex = self.tex.replace('DATE', str(datetime.now()))
+            begin = "\\begin{enumerate}\n"
+            for i in range(len(self.songs.get('nombre'))):
+                begin += f'\t\\item Canción\n'
+                begin += '\t\\begin{itemize}\n'
+                begin += '\t\t\\item Nombre: '
+                begin += self.songs.get('nombre')[i].replace('&', '\\&') + '\n'
+                begin += '\t\t\\item Artista: '
+                begin += self.songs.get('artista')[i] + '\n'
+                begin += '\t\t\\item Duración: '
+                begin += timet(self.songs.get('duracion')[i]) + '\n'
+                begin += '\t\t\\item Repetición: '
+                begin += str(self.songs.get('repeticion')[i]) + '\n'
+                begin += '\t\\end{itemize}\n'
+            begin += '\\end{enumerate}\n\n'
+            if self.existant_graph:
+                begin += "\\section{Grafica}\n"
+                begin += "\\begin{center}\n"
+                begin += "\\includegraphics[scale=0.75]{" + self.save_name
+                begin += ".png}\n"
+                begin += "\\end{center}\n"
+            else:
+                pass
+            self.tex = self.tex.replace('SUSTITUCION1', begin)
+            os.chdir(self.initial_directory)
+            with open(f'{self.save_name}.tex', 'w') as f:
+                f.write(self.tex)
+        elif self.report == 'Markdown':
+            self.md = self.md.replace('NOMBRELISTAREPRO', self.playlist_name)
+            self.md = self.md.replace('DATE', str(datetime.now()))
+            begin = ''
+            for i in range(len(self.songs.get('nombre'))):
+                begin += f'{i+1}. Canción\n'
+                begin += '\t* Nombre: '
+                begin += self.songs.get('nombre')[i] + '\n'
+                begin += '\t* Artista: '
+                begin += self.songs.get('artista')[i] + '\n'
+                begin += '\t* Duración: '
+                begin += timet(self.songs.get('duracion')[i]) + '\n'
+                begin += '\t* Repetición: '
+                begin += str(self.songs.get('repeticion')[i]) + '\n'
+            if self.existant_graph:
+                begin += '\n## Grafica\n'
+                begin += '![Image](' + self.save_name + '.png)'
+            else:
+                pass
+            self.md = self.md.replace('SUSTITUCION1', begin)
+            os.chdir(self.initial_directory)
+            with open(f'{self.save_name}.md', 'w') as f:
+                f.write(self.md)
 
 bl = '\033[1;35m  • \033[0;m'
 
@@ -236,4 +327,6 @@ if __name__ == "__main__":
     timet(285178)
     print(intento1.playlist_name)
     print(intento1.save_name)
+    intento1.nombre_playlist()
     intento1.make_graph()
+    intento1.save_report()

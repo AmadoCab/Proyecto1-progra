@@ -6,7 +6,6 @@ import time
 run = True
 
 # Main loop
-initial_directory = os.getcwd()
 directorio_csvs()
 directorio_repor()
 while run:
