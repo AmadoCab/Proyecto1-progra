@@ -67,23 +67,53 @@ while run:
             print('Hubo un error')
             time.sleep(1) # TIME
             continue
-        correcto = False
-        while not correcto:
-            print('\nDesea elevorar una gráfica [y/n]')
+        correcto1 = False
+        while not correcto1:
+            print('\n¿Desea elevorar una gráfica? [y/n]')
             ans3 = input(pregunta)
             ans3 = ans3.lower()
             if ans3 == 'y':
                 try:
                     print('Selecione la cantidad de columnas')
                     ans4 = int(input(pregunta))
+                    print('(Cierre la imagen para que el programa pueda continuar)')
                     musica_principal.make_histogram(ans4)
-                    correcto = True
+                    correcto1 = True
                 except:
                     pass
             elif ans3 == 'n':
-                correcto = True
+                correcto1 = True
             subprocess.run('clear', shell=True)
             musica_principal.make_report()
+        correcto2 = False
+        while not correcto2:
+            print('\n¿Desea guardar el reporte? [y/n]')
+            ans5 = input(pregunta)
+            ans5 = ans5.lower()
+            if ans5 == 'y':
+                print('Desea imprimir en:')
+                print('1) LaTeX\n2) Markdown\n3) Pdf')
+                print('Seleccione el indice')
+                try:
+                    ans6 = int(input(pregunta))
+                    if ans6 == 1:
+                        musica_principal.report = 'LaTeX'
+                    elif ans6 == 2:
+                        musica_principal.report = 'Markdown'
+                    elif ans6 == 3:
+                        musica_principal.report = 'Pdf'
+                    else:
+                        pass
+                    correcto2 = True
+                except:
+                    pass
+            elif ans5 == 'n':
+                correcto2 = True
+            musica_principal.save_report()
+            subprocess.run('clear', shell=True)
+            musica_principal.make_report()
+        print('\nSe creará un reporte en CSV de la lista de reproducción')
+        musica_principal.write_csv()
         loquesea = input('\nPresione (Enter) para continuar')
 
 #

@@ -17,7 +17,7 @@ class Documento:
     songs = {}
     orden = []
     repeticion = []
-    report = 'Markdown' # 'Markdown' 'LaTeX'
+    report = '' # 'Markdown' 'LaTeX' 'Pdf'
     existant_graph = False
 
     tex = """\\documentclass{article}
@@ -59,6 +59,7 @@ SUSTITUCION1"""
                     self.playlist_name = x.next_sibling.text
         tiempo = str(datetime.now()).replace(' ', '_')
         self.save_name = (f'{self.playlist_name}_{tiempo}')
+        self.save_name = self.save_name.replace(' ', '_')
 
     def probability_playlist(self):
         """Define la probabilidad de que un documento sea playlist"""
@@ -118,10 +119,11 @@ SUSTITUCION1"""
                 auxiliar.remove(auxiliar[0])
         self.songs['repeticion'] = repeticiones
 
-    def write_csv(self,nombre_doc):
+    def write_csv(self):
         """Recibe nombre para un documento le coloca la extensión CSV
         y guarda en el los valores de la playlist"""
-        with open(f'Datos/{nombre_doc}.csv', 'w') as csv_file:
+        os.chdir(os.path.join(self.initial_directory, 'ListasCSV'))
+        with open(f'{self.save_name}.csv', 'w') as csv_file:
             csv_file.write('Song ID, Nombre, Artista, Duración, Repetición\n')
             for i in range(len(self.songs.get('nombre'))):
                 csv_file.write(self.songs.get('song id')[i] + ', ')
@@ -147,7 +149,7 @@ SUSTITUCION1"""
         plt.xlabel('Canciones')
         plt.ylabel('Duracion en ms')
         plt.title('Graficas de duración')
-        os.chdir(self.initial_directory)
+        os.chdir(os.path.join(self.initial_directory, 'Reportes'))
         plt.savefig(f'{self.save_name}.png')
         plt.show()
         self.existant_graph = True
@@ -158,12 +160,13 @@ SUSTITUCION1"""
         plt.xlabel('Duracion en ms')
         plt.title('Histograma de duración')
         os.chdir(self.initial_directory)
+        os.chdir(os.path.join(self.initial_directory, 'Reportes'))
         plt.savefig(f'{self.save_name}.png')
         plt.show()
         self.existant_graph = True
 
     def save_report(self):
-        if self.report == 'LaTeX':
+        if (self.report == 'LaTeX' or self.report == 'Pdf'):
             self.tex = self.tex.replace('NOMBRELISTAREPRO', self.playlist_name)
             self.tex = self.tex.replace('DATE', str(datetime.now()))
             begin = "\\begin{enumerate}\n"
@@ -189,9 +192,16 @@ SUSTITUCION1"""
             else:
                 pass
             self.tex = self.tex.replace('SUSTITUCION1', begin)
-            os.chdir(self.initial_directory)
+            os.chdir(os.path.join(self.initial_directory, 'Reportes'))
             with open(f'{self.save_name}.tex', 'w') as f:
                 f.write(self.tex)
+            if self.report == 'Pdf':
+                subprocess.run(f'pdflatex {self.save_name}.tex' ,shell=True)
+                subprocess.run(f'rm {self.save_name}.log', shell=True)
+                subprocess.run(f'rm {self.save_name}.aux', shell=True)
+                subprocess.run(f'rm {self.save_name}.tex', shell=True)
+            else:
+                pass
         elif self.report == 'Markdown':
             self.md = self.md.replace('NOMBRELISTAREPRO', self.playlist_name)
             self.md = self.md.replace('DATE', str(datetime.now()))
@@ -212,9 +222,11 @@ SUSTITUCION1"""
             else:
                 pass
             self.md = self.md.replace('SUSTITUCION1', begin)
-            os.chdir(self.initial_directory)
+            os.chdir(os.path.join(self.initial_directory, 'Reportes'))
             with open(f'{self.save_name}.md', 'w') as f:
                 f.write(self.md)
+        else:
+            pass
 
 bl = '\033[1;35m  • \033[0;m'
 
@@ -322,7 +334,7 @@ if __name__ == "__main__":
     print(intento1.orden)
     intento1.find_repetidos()
     print(intento1.repeticion)
-    intento1.write_csv('hola')
+    intento1.write_csv()
     press('hola mundo')
     timet(285178)
     print(intento1.playlist_name)
