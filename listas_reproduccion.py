@@ -155,7 +155,10 @@ SUSTITUCION1"""
         self.existant_graph = True
 
     def make_histogram(self, bin_n):
-        tiempo = [int(i) for i in self.songs.get('duracion')]
+        tiempo = []
+        for i in range(len(self.songs.get('duracion'))):
+            for _ in range(self.songs.get('repeticion')[i]):
+                tiempo.append(int(self.songs.get('duracion')[i]))
         plt.hist(tiempo, bins=bin_n, edgecolor='black')
         plt.xlabel('Duracion en ms')
         plt.title('Histograma de duración')
@@ -340,5 +343,5 @@ if __name__ == "__main__":
     print(intento1.playlist_name)
     print(intento1.save_name)
     intento1.nombre_playlist()
-    intento1.make_graph()
+    intento1.make_histogram(5)
     intento1.save_report()

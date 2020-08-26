@@ -71,7 +71,7 @@ while run:
         while not correcto1:
             print('\n¿Desea elevorar una gráfica? [y/n]')
             ans3 = input(pregunta)
-            ans3 = ans3.lower()
+            ans3 = ans3.lower().strip()
             if ans3 == 'y':
                 try:
                     print('Selecione la cantidad de columnas')
@@ -89,7 +89,7 @@ while run:
         while not correcto2:
             print('\n¿Desea guardar el reporte? [y/n]')
             ans5 = input(pregunta)
-            ans5 = ans5.lower()
+            ans5 = ans5.lower().strip()
             if ans5 == 'y':
                 print('Desea imprimir en:')
                 print('1) LaTeX\n2) Markdown\n3) Pdf')
