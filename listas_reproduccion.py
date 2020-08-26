@@ -9,7 +9,7 @@ class Documento:
     # Atributos
     def __init__(self, archivo):
         self.archivo = archivo
-    
+
     initial_directory = os.getcwd()
     playlist_name = ''
     save_name = ''
@@ -111,12 +111,13 @@ SUSTITUCION1"""
         """Encuentra la repeticion de las canciones en una playlist y agrega
         estos valores al diccionario con los valores"""
         repeticiones = []
-        auxiliar = self.orden
+        auxiliar = self.orden.copy()
         while auxiliar:
-            self.repeticion.append((auxiliar[0],auxiliar.count(auxiliar[0])))
-            repeticiones.append(auxiliar.count(auxiliar[0]))
-            for _ in range(auxiliar.count(auxiliar[0])):
-                auxiliar.remove(auxiliar[0])
+            val = auxiliar[0]
+            self.repeticion.append((val,auxiliar.count(val)))
+            repeticiones.append(auxiliar.count(val))
+            for _ in range(auxiliar.count(val)):
+                auxiliar.remove(val)
         self.songs['repeticion'] = repeticiones
 
     def write_csv(self):
@@ -130,7 +131,9 @@ SUSTITUCION1"""
                 csv_file.write(self.songs.get('nombre')[i] + ', ')
                 csv_file.write(self.songs.get('artista')[i] + ', ')
                 csv_file.write(self.songs.get('duracion')[i] + ', ')
-                csv_file.write(str(self.songs.get('repeticion')[i]) + '\n')
+                for j in self.repeticion:
+                    if self.songs.get('song id')[i]==j[0]:
+                        csv_file.write(str(j[1]) + '\n')
 
     def make_report(self):
         press("--REPORTE--", sty='bold')
@@ -140,7 +143,9 @@ SUSTITUCION1"""
             print(f"{bl}Nombre: {self.songs.get('nombre')[i]}")
             print(f"{bl}Artista: {self.songs.get('artista')[i]}")
             print(f"{bl}Duración: {timet(self.songs.get('duracion')[i])}")
-            print(f"{bl}Veces agregada: {self.songs.get('repeticion')[i]}")
+            for j in self.repeticion:
+                    if self.songs.get('song id')[i]==j[0]:
+                        print(f"{bl}Veces agregada: {j[1]}")
     
     def make_graph(self):
         tiempo = [int(i) for i in self.songs.get('duracion')]
@@ -156,9 +161,11 @@ SUSTITUCION1"""
 
     def make_histogram(self, bin_n):
         tiempo = []
-        for i in range(len(self.songs.get('duracion'))):
-            for _ in range(self.songs.get('repeticion')[i]):
-                tiempo.append(int(self.songs.get('duracion')[i]))
+        for i in self.repeticion:
+            for _ in range(i[1]):
+                indice = self.songs.get('song id').index(i[0])
+                tiempo.append(self.songs.get('duracion')[indice])
+        tiempo.sort()
         plt.hist(tiempo, bins=bin_n, edgecolor='black')
         plt.xlabel('Duracion en ms')
         plt.title('Histograma de duración')
@@ -183,7 +190,9 @@ SUSTITUCION1"""
                 begin += '\t\t\\item Duración: '
                 begin += timet(self.songs.get('duracion')[i]) + '\n'
                 begin += '\t\t\\item Repetición: '
-                begin += str(self.songs.get('repeticion')[i]) + '\n'
+                for j in self.repeticion:
+                    if self.songs.get('song id')[i]==j[0]:
+                        begin += str(j[1]) + '\n'
                 begin += '\t\\end{itemize}\n'
             begin += '\\end{enumerate}\n\n'
             if self.existant_graph:
@@ -218,7 +227,9 @@ SUSTITUCION1"""
                 begin += '\t* Duración: '
                 begin += timet(self.songs.get('duracion')[i]) + '\n'
                 begin += '\t* Repetición: '
-                begin += str(self.songs.get('repeticion')[i]) + '\n'
+                for j in self.repeticion:
+                    if self.songs.get('song id')[i]==j[0]:
+                        begin += str(j[1]) + '\n'
             if self.existant_graph:
                 begin += '\n## Grafica\n'
                 begin += '![Image](' + self.save_name + '.png)'
@@ -230,6 +241,18 @@ SUSTITUCION1"""
                 f.write(self.md)
         else:
             pass
+    
+
+    def restart(self):
+        #del self.initial_directory
+        del self.playlist_name
+        del self.save_name
+        #del self.posible_playlist
+        self.songs.clear()
+        self.orden.clear()
+        self.repeticion.clear()
+        #del self.report
+        self.existant_graph = False
 
 bl = '\033[1;35m  • \033[0;m'
 
@@ -265,7 +288,10 @@ def timet(milisecs):
     tiempo = str(milisecs)
     mili_segundos = tiempo[-3:]
     minutos = int(tiempo[0:-3])
-    return f'{minutos//60}:{minutos%60}.{mili_segundos}'
+    if minutos%60 < 10:
+        return f'{minutos//60}:0{minutos%60}.{mili_segundos}'
+    else:
+        return f'{minutos//60}:{minutos%60}.{mili_segundos}'
 
 def directorio_csvs():
     """Si existe directorio con ese nombre """

@@ -92,7 +92,7 @@ while run:
             ans5 = ans5.lower().strip()
             if ans5 == 'y':
                 print('Desea imprimir en:')
-                print('1) LaTeX\n2) Markdown\n3) Pdf')
+                print('  1) LaTeX\n  2) Markdown\n  3) Pdf')
                 print('Seleccione el indice')
                 try:
                     ans6 = int(input(pregunta))
@@ -115,5 +115,6 @@ while run:
         print('\nSe creará un reporte en CSV de la lista de reproducción')
         musica_principal.write_csv()
         loquesea = input('\nPresione (Enter) para continuar')
+        musica_principal.restart()
 
 #
