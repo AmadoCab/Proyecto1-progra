@@ -23,11 +23,11 @@ while run:
             os.chdir(ans1)
         except:
             print('\nSu entrada no es válida')
-            time.sleep(1) # TIME
+            time.sleep(1)
             continue
         print('\nBuscando listas de reproducción en')
         print(ans1)
-        time.sleep(2) # TIME
+        time.sleep(2)
         subprocess.run('clear' ,shell=True)
         print(cabecera_documentos)
         i1 = 0
@@ -53,11 +53,11 @@ while run:
             musica_principal.nombre_playlist()
         except:
             print("Parece que hubo un error, reinicie proceso")
-            time.sleep(1) # TIME
+            time.sleep(1)
             continue
         print('\nRevisando el documento:', end=' ')
         print(lista_docs[ans2-1])
-        time.sleep(2) # TIME
+        time.sleep(2)
         subprocess.run('clear', shell=True)
         try:
             barra_carga(musica_principal)
@@ -65,7 +65,7 @@ while run:
         except:
             subprocess.run('clear', shell=True)
             print('Hubo un error')
-            time.sleep(1) # TIME
+            time.sleep(1)
             continue
         correcto1 = False
         while not correcto1:

@@ -51,6 +51,7 @@ SUSTITUCION1"""
 
     # Metodos
     def nombre_playlist(self):
+        """Nombres para guardar los archivos"""
         with open(self.archivo, 'r') as xml_file:
             soup = BeautifulSoup(xml_file, 'lxml')
             container = soup.find('array').find('dict').find_all('key')
@@ -136,6 +137,7 @@ SUSTITUCION1"""
                         csv_file.write(str(j[1]) + '\n')
 
     def make_report(self):
+        """Imprime en terminal un reporte de las canciones"""
         press("--REPORTE--", sty='bold')
         print(f'Las canciones en la lista de reproducción: {self.archivo}')
         for i in range(len(self.songs.get('nombre'))):
@@ -147,7 +149,8 @@ SUSTITUCION1"""
                     if self.songs.get('song id')[i]==j[0]:
                         print(f"{bl}Veces agregada: {j[1]}")
     
-    def make_graph(self):
+    def make_graph(self): # No funciona (ni se usa en el programa)
+        """Hace un grafico de barras con canción y duración"""
         tiempo = [int(i) for i in self.songs.get('duracion')]
         nombrec = self.songs.get('nombre')
         plt.barh(nombrec, tiempo)
@@ -160,6 +163,7 @@ SUSTITUCION1"""
         self.existant_graph = True
 
     def make_histogram(self, bin_n):
+        """Crea un histograma de la duración de las canciones"""
         tiempo = []
         for i in self.repeticion:
             for _ in range(i[1]):
@@ -176,6 +180,7 @@ SUSTITUCION1"""
         self.existant_graph = True
 
     def save_report(self):
+        """Crea un reporte en distintos formatos y lo guarda"""
         if (self.report == 'LaTeX' or self.report == 'Pdf'):
             self.tex = self.tex.replace('NOMBRELISTAREPRO', self.playlist_name)
             self.tex = self.tex.replace('DATE', str(datetime.now()))
@@ -244,6 +249,7 @@ SUSTITUCION1"""
     
 
     def restart(self):
+        """Reinicia los valores de la clase"""
         #del self.initial_directory
         del self.playlist_name
         del self.save_name
@@ -294,7 +300,8 @@ def timet(milisecs):
         return f'{minutos//60}:{minutos%60}.{mili_segundos}'
 
 def directorio_csvs():
-    """Si existe directorio con ese nombre """
+    """Si existe directorio con ese nombre no hace nada, si no existe
+    lo crea"""
     for i in os.listdir():
         if i == 'ListasCSV':
             return 1
@@ -302,6 +309,8 @@ def directorio_csvs():
     return 0
 
 def directorio_repor():
+    """Si existe directorio con ese nombre no hace nada, si no existe
+    lo crea"""
     for i in os.listdir():
         if i == 'Reportes':
             return 1
@@ -309,6 +318,8 @@ def directorio_repor():
     return 0
 
 def barra_carga(archivo):
+    """Crea una barra de carga y ejecuta las funciones necesarias para cada 
+    clase"""
     carga="[                                                            ](0%)"
     print(carga)
     time.sleep(0.5)
