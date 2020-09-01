@@ -128,9 +128,9 @@ SUSTITUCION1"""
         with open(f'{self.save_name}.csv', 'w') as csv_file:
             csv_file.write('Song ID, Nombre, Artista, Duración, Repetición\n')
             for i in range(len(self.songs.get('nombre'))):
-                csv_file.write(self.songs.get('song id')[i] + ', ')
-                csv_file.write(self.songs.get('nombre')[i] + ', ')
-                csv_file.write(self.songs.get('artista')[i] + ', ')
+                csv_file.write(self.songs.get('song id')[i] + ', "')
+                csv_file.write(self.songs.get('nombre')[i] + '", "')
+                csv_file.write(self.songs.get('artista')[i] + '", ')
                 csv_file.write(self.songs.get('duracion')[i] + ', ')
                 for j in self.repeticion:
                     if self.songs.get('song id')[i]==j[0]:
@@ -170,6 +170,7 @@ SUSTITUCION1"""
                 indice = self.songs.get('song id').index(i[0])
                 tiempo.append(self.songs.get('duracion')[indice])
         tiempo.sort()
+        tiempo = [int(i) for i in tiempo]
         plt.hist(tiempo, bins=bin_n, edgecolor='black')
         plt.xlabel('Duracion en ms')
         plt.title('Histograma de duración')
@@ -213,7 +214,7 @@ SUSTITUCION1"""
             with open(f'{self.save_name}.tex', 'w') as f:
                 f.write(self.tex)
             if self.report == 'Pdf':
-                subprocess.run(f'pdflatex {self.save_name}.tex' ,shell=True)
+                subprocess.run(f'pdflatex --interaction=batchmode {self.save_name}.tex' ,shell=True)
                 subprocess.run(f'rm {self.save_name}.log', shell=True)
                 subprocess.run(f'rm {self.save_name}.aux', shell=True)
                 subprocess.run(f'rm {self.save_name}.tex', shell=True)

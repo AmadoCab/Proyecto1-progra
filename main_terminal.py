@@ -79,7 +79,9 @@ while run:
                     print('(Cierre la imagen para que el programa pueda continuar)')
                     musica_principal.make_histogram(ans4)
                     correcto1 = True
-                except:
+                except Exception as e:
+                    print(e)
+                    time.sleep(5)
                     pass
             elif ans3 == 'n':
                 correcto1 = True
